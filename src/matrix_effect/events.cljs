@@ -1,7 +1,6 @@
 (ns matrix-effect.events
   (:require
    [matrix-effect.canvas.util :as canvas]
-   [matrix-effect.db :as db]
    [matrix-effect.timer.util :as timer]
    [re-frame.core :as re-frame]))
 
