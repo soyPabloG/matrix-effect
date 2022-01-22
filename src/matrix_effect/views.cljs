@@ -1,5 +1,6 @@
 (ns matrix-effect.views
   (:require
+   [matrix-effect.dimensions :as dimensions]
    [matrix-effect.events :as events]
    [re-frame.core :as re-frame]))
 
@@ -7,5 +8,5 @@
   [:div
    [:h1 "The matrix-effect"]
    [:canvas {:id     "canv"
-             :width  1000
-             :height 10000}]])
+             :width  dimensions/width
+             :height dimensions/height}]])
