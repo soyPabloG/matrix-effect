@@ -6,8 +6,7 @@
 (defn main-panel []
   (let [name (re-frame/subscribe [::subs/name])]
     [:div
-     [:h1
-      "Hello from " @name]
+     [:h1 "The matrix-effect"]
      [:canvas {:id     "canv"
                :width  1000
                :height 10000}]]))
