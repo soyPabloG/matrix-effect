@@ -2,6 +2,7 @@
   (:require
    [matrix-effect.canvas.util :as canvas]
    [matrix-effect.db :as db]
+   [matrix-effect.timer.util :as timer]
    [re-frame.core :as re-frame]))
 
 (re-frame/reg-cofx
@@ -54,4 +55,11 @@
  (fn [{:keys [db canvas]} _]
    (let [cols (+ (Math/floor (/ 1000 20)) 1)]
      {:db                     (assoc db :y-pos (repeat cols 0))
-      ::canvas/draw-rectangle [canvas "#000" 1000 10000]})))
+      ::canvas/draw-rectangle [canvas "#000" 1000 10000]
+      ::timer/new-interval    [#(re-frame/dispatch [::next-frame]) 50]})))
+
+(re-frame/reg-event-fx
+ ::stop
+ (fn [{db :db} _]
+   {:db                   (dissoc db :y-pos)
+    ::timer/stop-interval (get db :timeout-id)}))
