@@ -1,6 +1,5 @@
 (ns matrix-effect.events
   (:require
-   [matrix-effect.canvas.util :as canvas]
    [matrix-effect.dimensions :as dimensions]
    [matrix-effect.timer.util :as timer]
    [re-frame.core :as re-frame]))
@@ -16,16 +15,6 @@
    (let [random-char (fn [] (String/fromCharCode (* (rand) 128)))]
      (assoc cofx :rand-chars (repeatedly n random-char)))))
 
-
-(re-frame/reg-fx
- ::draw-frame
- (fn [[canvas y-pos chars]]
-   (canvas/draw-rectangle! canvas "#0001" dimensions/width dimensions/height)
-   (run!
-     (fn [[idx y]]
-       (let [x (* idx 20)]
-         (canvas/draw-character! canvas "#0F0" (nth chars idx) x y)))
-     (map-indexed vector y-pos))))
 
 (defn next-y-pos
   "Takes a `y-pos` seq and generates `y`s values (moving them 20px down) for
@@ -51,7 +40,7 @@
 
 (re-frame/reg-event-fx
  ::initialize
- (fn [{:keys [db canvas]} _]
+ (fn [{:keys [db]} _]
    (let [cols (dimensions/cols dimensions/width)]
      {:db                  (assoc db :y-pos (repeat cols 0))
       ::timer/new-interval [#(re-frame/dispatch [::next-frame]) 50]})))
