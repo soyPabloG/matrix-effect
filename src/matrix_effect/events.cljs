@@ -45,7 +45,9 @@
   (re-frame/inject-cofx ::random-numbers (dimensions/cols dimensions/width))
   (re-frame/inject-cofx ::random-chars (dimensions/cols dimensions/width))]
  (fn [{:keys [db] :as cofx} _]
-   {:db          (update db :y-pos next-y-pos (:rand-nums cofx))
+   {:db          (-> db
+                     (update :y-pos next-y-pos (:rand-nums cofx))
+                     (assoc :chars (:rand-chars cofx)))
     ::draw-frame [(:canvas cofx) (:y-pos db) (:rand-chars cofx)]}))
 
 
@@ -61,5 +63,5 @@
 (re-frame/reg-event-fx
  ::stop
  (fn [{db :db} _]
-   {:db                   (dissoc db :y-pos)
+   {:db                   (dissoc db :y-pos :chars)
     ::timer/stop-interval (get db :timeout-id)}))
