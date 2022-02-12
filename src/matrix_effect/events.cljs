@@ -30,7 +30,7 @@
 (defn next-y-pos
   "Takes a `y-pos` seq and generates `y`s values (moving them 20px down) for
    the next frame. According to `rand-nums`, randomly resets the end of the
-   column if it's at least 100px high."
+   column if it's at least 60% full height."
   [y-pos rand-nums]
   (->> y-pos
        (map-indexed vector)
