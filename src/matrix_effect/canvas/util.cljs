@@ -7,7 +7,7 @@
  (fn [cofx]
    (assoc cofx :canvas (.getElementById js/document "canv"))))
 
-(defn draw-rectangle
+(defn draw-rectangle!
   [canvas color width height]
   (let [ctx (.getContext canvas "2d")]
     (aset ctx "fillStyle" color)
@@ -16,9 +16,9 @@
 (re-frame/reg-fx
  ::draw-rectangle
  (fn [[canvas color width height]]
-   (draw-rectangle canvas color width height)))
+   (draw-rectangle! canvas color width height)))
 
-(defn draw-character
+(defn draw-character!
   [canvas color char width height]
   (let [ctx (.getContext canvas "2d")]
     (aset ctx "fillStyle" color)

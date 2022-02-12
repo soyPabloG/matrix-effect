@@ -20,11 +20,11 @@
 (re-frame/reg-fx
  ::draw-frame
  (fn [[canvas y-pos chars]]
-   (canvas/draw-rectangle canvas "#0001" dimensions/width dimensions/height)
+   (canvas/draw-rectangle! canvas "#0001" dimensions/width dimensions/height)
    (run!
      (fn [[idx y]]
        (let [x (* idx 20)]
-         (canvas/draw-character canvas "#0F0" (nth chars idx) x y)))
+         (canvas/draw-character! canvas "#0F0" (nth chars idx) x y)))
      (map-indexed vector y-pos))))
 
 (defn next-y-pos
