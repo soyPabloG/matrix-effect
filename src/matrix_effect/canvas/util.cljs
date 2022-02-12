@@ -19,7 +19,7 @@
    (draw-rectangle canvas color width height)))
 
 (defn draw-character
-  [canvas char color width height]
+  [canvas color char width height]
   (let [ctx (.getContext canvas "2d")]
     (aset ctx "fillStyle" color)
     (aset ctx "font" "15pt monospace")

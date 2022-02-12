@@ -24,7 +24,7 @@
    (run!
      (fn [[idx y]]
        (let [x (* idx 20)]
-         (canvas/draw-character canvas (nth chars idx) "#0F0" x y)))
+         (canvas/draw-character canvas "#0F0" (nth chars idx) x y)))
      (map-indexed vector y-pos))))
 
 (defn next-y-pos
