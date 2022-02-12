@@ -41,24 +41,20 @@
 
 (re-frame/reg-event-fx
  ::next-frame
- [(re-frame/inject-cofx ::canvas/get-canvas)
-  (re-frame/inject-cofx ::random-numbers (dimensions/cols dimensions/width))
+ [(re-frame/inject-cofx ::random-numbers (dimensions/cols dimensions/width))
   (re-frame/inject-cofx ::random-chars (dimensions/cols dimensions/width))]
  (fn [{:keys [db] :as cofx} _]
-   {:db          (-> db
-                     (update :y-pos next-y-pos (:rand-nums cofx))
-                     (assoc :chars (:rand-chars cofx)))
-    ::draw-frame [(:canvas cofx) (:y-pos db) (:rand-chars cofx)]}))
+   {:db (-> db
+            (update :y-pos next-y-pos (:rand-nums cofx))
+            (assoc :chars (:rand-chars cofx)))}))
 
 
 (re-frame/reg-event-fx
  ::initialize
- [(re-frame/inject-cofx ::canvas/get-canvas)]
  (fn [{:keys [db canvas]} _]
    (let [cols (dimensions/cols dimensions/width)]
-     {:db                     (assoc db :y-pos (repeat cols 0))
-      ::canvas/draw-rectangle [canvas "#000" dimensions/width dimensions/height]
-      ::timer/new-interval    [#(re-frame/dispatch [::next-frame]) 50]})))
+     {:db                  (assoc db :y-pos (repeat cols 0))
+      ::timer/new-interval [#(re-frame/dispatch [::next-frame]) 50]})))
 
 (re-frame/reg-event-fx
  ::stop
