@@ -11,22 +11,21 @@
 (defn canvas
   [{:keys [width height]}]
   (reagent/create-class
-    {:display-name "canv"
-     :reagent-render (fn [{:keys [width height]}]
-                       [:canvas {:width width, :height height}])
-     :component-did-mount (fn [comp]
+   {:display-name         "canv"
+    :reagent-render       (fn [{:keys [width height]}]
+                            [:canvas {:width width :height height}])
+    :component-did-mount  (fn [comp]
                             (let [canvas (rdom/dom-node comp)]
-                              (canvas.util/draw-rectangle! canvas "#000" width height)))
-     :component-did-update (fn [comp]
-                             (let [canvas   (rdom/dom-node comp)
-                                   elements (get (reagent/props comp) :elements)]
-                               (canvas.util/draw-rectangle! canvas "#0001" width height)
-                               (run! (partial apply canvas.util/draw-character! canvas "#0F0")
-                                     elements)))}))
+                              (canvas.util/draw-background! canvas width height)))
+    :component-did-update (fn [comp]
+                            (let [canvas  (rdom/dom-node comp)
+                                  symbols (get (reagent/props comp) :symbols)]
+                              (canvas.util/fade-canvas! canvas width height)
+                              (run! #(canvas.util/draw-symbol! canvas %) symbols)))}))
 
 (defn main-panel []
   [:div
    [:h1 "The matrix-effect"]
-   (let [new-elements (re-frame/subscribe [::subs/elements])]
-     [canvas {:width dimensions/width, :height dimensions/height
-              :elements @new-elements}])])
+   [canvas {:width   dimensions/width
+            :height  dimensions/height
+            :symbols @(re-frame/subscribe [::subs/symbols])}]])
