@@ -1,6 +1,5 @@
 (ns matrix-effect.events
   (:require
-   [matrix-effect.canvas.util :as canvas]
    [matrix-effect.dimensions :as dimensions]
    [matrix-effect.timer.util :as timer]
    [re-frame.core :as re-frame]))
@@ -17,20 +16,10 @@
      (assoc cofx :rand-chars (repeatedly n random-char)))))
 
 
-(re-frame/reg-fx
- ::draw-frame
- (fn [[canvas y-pos chars]]
-   (canvas/draw-rectangle canvas "#0001" dimensions/width dimensions/height)
-   (run!
-     (fn [[idx y]]
-       (let [x (* idx 20)]
-         (canvas/draw-character canvas (nth chars idx) "#0F0" x y)))
-     (map-indexed vector y-pos))))
-
 (defn next-y-pos
   "Takes a `y-pos` seq and generates `y`s values (moving them 20px down) for
    the next frame. According to `rand-nums`, randomly resets the end of the
-   column if it's at least 100px high."
+   column if it's at least 60% full height."
   [y-pos rand-nums]
   (->> y-pos
        (map-indexed vector)
@@ -41,25 +30,23 @@
 
 (re-frame/reg-event-fx
  ::next-frame
- [(re-frame/inject-cofx ::canvas/get-canvas)
-  (re-frame/inject-cofx ::random-numbers (dimensions/cols dimensions/width))
+ [(re-frame/inject-cofx ::random-numbers (dimensions/cols dimensions/width))
   (re-frame/inject-cofx ::random-chars (dimensions/cols dimensions/width))]
  (fn [{:keys [db] :as cofx} _]
-   {:db          (update db :y-pos next-y-pos (:rand-nums cofx))
-    ::draw-frame [(:canvas cofx) (:y-pos db) (:rand-chars cofx)]}))
+   {:db (-> db
+            (update :y-pos next-y-pos (:rand-nums cofx))
+            (assoc :chars (:rand-chars cofx)))}))
 
 
 (re-frame/reg-event-fx
  ::initialize
- [(re-frame/inject-cofx ::canvas/get-canvas)]
- (fn [{:keys [db canvas]} _]
+ (fn [{:keys [db]} _]
    (let [cols (dimensions/cols dimensions/width)]
-     {:db                     (assoc db :y-pos (repeat cols 0))
-      ::canvas/draw-rectangle [canvas "#000" dimensions/width dimensions/height]
-      ::timer/new-interval    [#(re-frame/dispatch [::next-frame]) 50]})))
+     {:db                  (assoc db :y-pos (repeat cols 0))
+      ::timer/new-interval [#(re-frame/dispatch [::next-frame]) 50]})))
 
 (re-frame/reg-event-fx
  ::stop
  (fn [{db :db} _]
-   {:db                   (dissoc db :y-pos)
+   {:db                   (dissoc db :y-pos :chars)
     ::timer/stop-interval (get db :timeout-id)}))
